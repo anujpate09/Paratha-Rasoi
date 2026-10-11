@@ -1,15 +1,22 @@
 import { mkdirSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
-import { DatabaseSync } from 'node:sqlite'
+import { pathToFileURL } from 'node:url'
+import { createClient } from '@libsql/client'
 
+// Hosted Turso database when TURSO_DATABASE_URL is set (production on Render),
+// otherwise a local SQLite file (development).
+const REMOTE_URL = process.env.TURSO_DATABASE_URL
 export const DB_PATH = resolve(process.env.DB_PATH || 'data/paratha-rasoi.db')
-mkdirSync(dirname(DB_PATH), { recursive: true })
+export const DB_LOCATION = REMOTE_URL || DB_PATH
 
-export const db = new DatabaseSync(DB_PATH)
+if (!REMOTE_URL) mkdirSync(dirname(DB_PATH), { recursive: true })
 
-db.exec(`
-  PRAGMA journal_mode = WAL;
+export const db = createClient(
+  REMOTE_URL ? { url: REMOTE_URL, authToken: process.env.TURSO_AUTH_TOKEN } : { url: pathToFileURL(DB_PATH).href },
+)
 
+// Resolves once the tables exist; the server waits for it before listening.
+export const ready = db.executeMultiple(`
   CREATE TABLE IF NOT EXISTS reservations (
     id         INTEGER PRIMARY KEY AUTOINCREMENT,
     name       TEXT    NOT NULL,
@@ -29,31 +36,51 @@ db.exec(`
     message    TEXT NOT NULL,
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
   );
+
+  CREATE TABLE IF NOT EXISTS otps (
+    phone     TEXT    PRIMARY KEY,
+    code_hash TEXT    NOT NULL,
+    expires   INTEGER NOT NULL,
+    attempts  INTEGER NOT NULL DEFAULT 0,
+    sent_at   INTEGER NOT NULL,
+    sends     INTEGER NOT NULL,
+    window_at INTEGER NOT NULL
+  );
 `)
 
-const insertReservation = db.prepare(
-  'INSERT INTO reservations (name, phone, date, time, guests) VALUES (?, ?, ?, ?, ?)',
-)
-const insertMessage = db.prepare(
-  'INSERT INTO messages (name, phone, topic, message) VALUES (?, ?, ?, ?)',
-)
+// libSQL rows are array-like; turn them into plain { column: value } objects for JSON.
+const toObjects = ({ columns, rows }) =>
+  rows.map((row) => Object.fromEntries(columns.map((column, i) => [column, row[i]])))
 
-export function addReservation({ name, phone, date, time, guests }) {
-  return Number(insertReservation.run(name, phone, date, time, guests).lastInsertRowid)
+export async function addReservation({ name, phone, date, time, guests }) {
+  const result = await db.execute({
+    sql: 'INSERT INTO reservations (name, phone, date, time, guests) VALUES (?, ?, ?, ?, ?)',
+    args: [name, phone, date, time, guests],
+  })
+  return Number(result.lastInsertRowid)
 }
 
-export function addMessage({ name, phone, topic, message }) {
-  return Number(insertMessage.run(name, phone, topic, message).lastInsertRowid)
+export async function addMessage({ name, phone, topic, message }) {
+  const result = await db.execute({
+    sql: 'INSERT INTO messages (name, phone, topic, message) VALUES (?, ?, ?, ?)',
+    args: [name, phone, topic, message],
+  })
+  return Number(result.lastInsertRowid)
 }
 
-export function listReservations() {
-  return db.prepare('SELECT * FROM reservations ORDER BY date, time').all()
+export async function listReservations() {
+  return toObjects(await db.execute('SELECT * FROM reservations ORDER BY date, time'))
 }
 
-export function listMessages() {
-  return db.prepare('SELECT * FROM messages ORDER BY created_at DESC').all()
+export async function listMessages() {
+  return toObjects(await db.execute('SELECT * FROM messages ORDER BY created_at DESC'))
 }
 
-export function setReservationStatus(id, status) {
-  return db.prepare('UPDATE reservations SET status = ? WHERE id = ?').run(status, id).changes > 0
+export async function setReservationStatus(id, status) {
+  const result = await db.execute({ sql: 'UPDATE reservations SET status = ? WHERE id = ?', args: [status, id] })
+  return result.rowsAffected > 0
+}
+
+export async function getOtp(phone) {
+  return toObjects(await db.execute({ sql: 'SELECT * FROM otps WHERE phone = ?', args: [phone] }))[0]
 }

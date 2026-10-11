@@ -1,8 +1,9 @@
 // Print the database tables in the terminal: npm run db
-import { DB_PATH, listMessages, listReservations } from './db.js'
+import { DB_LOCATION, listMessages, listReservations, ready } from './db.js'
 
-console.log(`Database: ${DB_PATH}\n`)
+await ready
+console.log(`Database: ${DB_LOCATION}\n`)
 console.log('Reservations')
-console.table(listReservations())
+console.table(await listReservations())
 console.log('\nMessages')
-console.table(listMessages())
+console.table(await listMessages())

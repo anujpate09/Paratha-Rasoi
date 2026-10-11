@@ -13,6 +13,7 @@
     "db:open": "node --no-warnings --env-file-if-exists=.env server/open-db.js"
   },
   "dependencies": {
+    "@libsql/client": "^0.18.0",
     "express": "^5.2.1",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"

@@ -9,12 +9,16 @@ npm run build    # production build in dist/
 npm start        # serve dist/ + API from one Node server
 ```
 
-Needs Node 22.13+ (uses the built-in `node:sqlite`).
+Needs Node 22.9+ (the npm scripts use `--env-file-if-exists`).
 
 ## Database
 
-Reservations and contact-form messages are saved in a local SQLite file,
-`data/paratha-rasoi.db` (created automatically, git-ignored). Change the path with `DB_PATH` in `.env`.
+Reservations and contact-form messages are saved with [libSQL](https://github.com/tursodatabase/libsql-client-ts):
+
+- **Locally:** a SQLite file, `data/paratha-rasoi.db` (created automatically, git-ignored). Change the path with `DB_PATH`.
+- **In production:** a free hosted [Turso](https://turso.tech) database, so data survives restarts and redeploys
+  (Render's free plan has no persistent disk). Set `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN`.
+  Tables are created automatically on first start.
 
 - `POST /api/otp`: sends a booking OTP to the customer's WhatsApp
 - `POST /api/reservations`: reservation modal (saved only with the correct OTP)
@@ -66,3 +70,15 @@ Without a key the section shows a "Read all reviews on Google" link instead.
 - `server/`: Express API (`index.js`) and SQLite setup (`db.js`)
 - `src/components/`: one component per section
 - `public/assets/`: images
+
+## Deploy on Render (free)
+
+1. Create a database at [turso.tech](https://turso.tech) and copy its URL (`libsql://…`) and an auth token.
+2. On [render.com](https://render.com): **New → Web Service** → connect this GitHub repo.
+   - Build command: `npm install --include=dev && npm run build`
+   - Start command: `npm start`
+3. Environment variables: `NODE_VERSION=24`, `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`, `ADMIN_TOKEN`,
+   and optionally `VITE_GOOGLE_MAPS_API_KEY`, `VITE_GOOGLE_PLACE_ID`, `WHATSAPP_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`.
+
+Every push to `main` redeploys automatically. On the free plan the site sleeps after 15 minutes idle
+and takes about a minute to wake up.
