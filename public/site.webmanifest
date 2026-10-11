@@ -1,0 +1,11 @@
+{
+  "name": "Paratha Rasoi",
+  "short_name": "Paratha Rasoi",
+  "icons": [
+    { "src": "/favicon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/favicon-512.png", "sizes": "512x512", "type": "image/png" }
+  ],
+  "theme_color": "#11100f",
+  "background_color": "#11100f",
+  "display": "standalone"
+}
