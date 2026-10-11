@@ -557,3 +557,18 @@ html:is([lang=hi],[lang=kn]) .dish-body p{font-size:13px;line-height:1.6}
 html:is([lang=hi],[lang=kn]) .contact-item small,html:is([lang=hi],[lang=kn]) .speciality-meta small,html:is([lang=hi],[lang=kn]) .stats div{font-size:13px}
 html:is([lang=hi],[lang=kn]) .form-grid label{font-size:13px}
 html:is([lang=hi],[lang=kn]) .footer-grid p,html:is([lang=hi],[lang=kn]) .footer-grid li{font-size:13px}
+
+/* ---- Admin: booking mode switch ---- */
+.admin-settings{background:var(--panel);border:1px solid #53443c;border-radius:12px;padding:18px;margin-bottom:24px;display:grid;grid-template-columns:minmax(180px,1fr) 2fr;gap:16px;align-items:center}
+.admin-settings h2{font:500 20px var(--serif);margin:0 0 4px}
+.admin-settings p{color:var(--muted);font-size:13px;margin:0;line-height:1.5}
+.admin-switch{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.admin-switch button{text-align:left;background:#1d1a18;border:1px solid #53443c;border-radius:10px;padding:12px 14px;color:var(--text);display:flex;flex-direction:column;gap:4px;transition:border-color .2s,background .2s}
+.admin-switch button:hover:not(:disabled){border-color:var(--accent)}
+.admin-switch button[aria-checked=true]{border-color:var(--accent);background:#3b291f}
+.admin-switch button[aria-checked=true] b::before{content:'● ';color:var(--accent)}
+.admin-switch button:disabled{cursor:default}
+.admin-switch b{font-size:14px}
+.admin-switch small{color:var(--muted);font-size:12px;line-height:1.4}
+.admin-settings .admin-warning{grid-column:1/-1;color:#f0b37e;background:#3a2414;border:1px solid #7a4a2a;border-radius:8px;padding:10px 12px}
+@media(max-width:680px){.admin-settings,.admin-switch{grid-template-columns:1fr}}

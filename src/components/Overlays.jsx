@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { createReservation, requestOtp } from '../api'
+import { createReservation, getSettings, requestOtp } from '../api'
 import { MENU, TIMES, WHATSAPP, ZOMATO_BOOKING } from '../data'
 import { CATEGORY_NAMES, DISH_NAMES, useLang } from '../i18n'
 import Icon from './Icon'
@@ -68,7 +68,7 @@ export function Overlay({ show, onClick }) {
 function restaurantWhatsApp(booking) {
   const day = new Date(`${booking.date}T00:00`).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' })
   const text = [
-    'Hello Paratha Rasoi! I have reserved a table.',
+    'Hello Paratha Rasoi! I would like to reserve a table.',
     '',
     `Name: ${booking.name}`,
     `Phone: ${booking.phone}`,
@@ -82,13 +82,26 @@ function restaurantWhatsApp(booking) {
 export function ReservationModal({ open, onClose }) {
   const { t } = useLang()
   const ref = usePanel(open, onClose)
-  // form → otp (code sent to the customer's WhatsApp) → done (saved in the database)
+  // Booking mode is set on the admin page: 'otp' or 'whatsapp' (form opens WhatsApp to the restaurant).
+  const [mode, setMode] = useState(null)
+  // form → otp (OTP mode only: code sent to the customer's WhatsApp) → done (saved in the database)
   const [step, setStep] = useState('form')
   const [booking, setBooking] = useState(null)
   const [cooldown, setCooldown] = useState(0)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const today = new Date().toISOString().slice(0, 10)
+
+  useEffect(() => {
+    if (!open) return
+    let cancelled = false
+    getSettings()
+      .then((settings) => !cancelled && setMode(settings.bookingMode))
+      .catch(() => !cancelled && setMode('whatsapp'))
+    return () => {
+      cancelled = true
+    }
+  }, [open])
 
   useEffect(() => {
     if (!open) {
@@ -126,7 +139,17 @@ export function ReservationModal({ open, onClose }) {
 
   const onSubmit = (event) => {
     event.preventDefault()
-    sendOtp(Object.fromEntries(new FormData(event.currentTarget)))
+    const details = Object.fromEntries(new FormData(event.currentTarget))
+    if (mode === 'otp') return sendOtp(details)
+
+    // The old way: send the details to the restaurant's WhatsApp and save them. WhatsApp must open
+    // synchronously inside the submit handler, or browsers block it as a popup.
+    window.open(restaurantWhatsApp(details), '_blank', 'noopener')
+    run(async () => {
+      setBooking(details)
+      await createReservation(details)
+      setStep('done')
+    })
   }
 
   const onVerify = (event) => {
@@ -162,10 +185,16 @@ export function ReservationModal({ open, onClose }) {
       {step === 'done' && (
         <>
           <div className="booking-message" role="status">
-            {t('reserve.success')}
+            {mode === 'otp' ? (
+              t('reserve.success')
+            ) : (
+              <>
+                {t('reserve.successWhatsapp')[0]}<b>{t('reserve.successWhatsapp')[1]}</b>{t('reserve.successWhatsapp')[2]}
+              </>
+            )}
           </div>
           <a className="btn btn-primary booking-whatsapp" href={restaurantWhatsApp(booking)} target="_blank" rel="noreferrer">
-            <Icon name="whatsapp" size={18} /> {t('reserve.alsoWhatsapp')}
+            <Icon name="whatsapp" size={18} /> {mode === 'otp' ? t('reserve.alsoWhatsapp') : t('reserve.openWhatsapp')}
           </a>
         </>
       )}
@@ -240,8 +269,9 @@ export function ReservationModal({ open, onClose }) {
               </select>
             </label>
           </div>
-          <button className="btn btn-primary" type="submit" disabled={saving}>
-            <Icon name="whatsapp" size={18} /> {saving ? t('reserve.sending') : t('reserve.submit')}
+          <button className="btn btn-primary" type="submit" disabled={saving || !mode}>
+            <Icon name="whatsapp" size={18} />{' '}
+            {saving ? t('reserve.sending') : mode === 'otp' ? t('reserve.submit') : t('reserve.submitWhatsapp')}
           </button>
           <div className="booking-or" aria-hidden="true">
             <span>{t('reserve.or')}</span>

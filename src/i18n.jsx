@@ -110,6 +110,8 @@ const STRINGS = {
       resend: 'Resend OTP', resendIn: 'Resend OTP in {s}s', changeNumber: 'Change details',
       success: "Thanks! Your table request is saved. We'll call you to confirm.",
       alsoWhatsapp: 'Also message us on WhatsApp',
+      submitWhatsapp: 'Request via WhatsApp', openWhatsapp: 'Open WhatsApp again',
+      successWhatsapp: ['Thanks! WhatsApp is open with your booking details. Tap ', 'Send', " so we get it right away, and we'll call you to confirm."],
     },
     search: {
       label: 'Search the menu', input: 'Search dishes', placeholder: 'Search dishes, e.g. paneer',
@@ -227,6 +229,8 @@ const STRINGS = {
       resend: 'OTP दोबारा भेजें', resendIn: '{s} सेकंड में OTP दोबारा भेजें', changeNumber: 'जानकारी बदलें',
       success: 'धन्यवाद! आपकी टेबल की रिक्वेस्ट सेव हो गई है। हम आपको कॉल करके कन्फ़र्म करेंगे।',
       alsoWhatsapp: 'WhatsApp पर भी मैसेज करें',
+      submitWhatsapp: 'WhatsApp से बुक करें', openWhatsapp: 'WhatsApp फिर से खोलें',
+      successWhatsapp: ['धन्यवाद! आपकी बुकिंग की जानकारी के साथ WhatsApp खुल गया है। ', 'Send', ' दबाइए ताकि हमें तुरंत मिल जाए, फिर हम आपको कॉल करके कन्फ़र्म करेंगे।'],
     },
     search: {
       label: 'मेन्यू में खोजें', input: 'डिश खोजें', placeholder: 'डिश खोजें, जैसे पनीर या paneer',
@@ -344,6 +348,8 @@ const STRINGS = {
       resend: 'OTP ಮತ್ತೆ ಕಳುಹಿಸಿ', resendIn: '{s} ಸೆಕೆಂಡ್‌ಗಳಲ್ಲಿ OTP ಮತ್ತೆ ಕಳುಹಿಸಿ', changeNumber: 'ವಿವರ ಬದಲಿಸಿ',
       success: 'ಧನ್ಯವಾದಗಳು! ನಿಮ್ಮ ಟೇಬಲ್ ವಿನಂತಿ ಉಳಿಸಲಾಗಿದೆ. ಖಚಿತಪಡಿಸಲು ನಾವು ನಿಮಗೆ ಕರೆ ಮಾಡುತ್ತೇವೆ.',
       alsoWhatsapp: 'WhatsApp ನಲ್ಲಿಯೂ ಮೆಸೇಜ್ ಮಾಡಿ',
+      submitWhatsapp: 'WhatsApp ಮೂಲಕ ಬುಕ್ ಮಾಡಿ', openWhatsapp: 'WhatsApp ಮತ್ತೆ ತೆರೆಯಿರಿ',
+      successWhatsapp: ['ಧನ್ಯವಾದಗಳು! ನಿಮ್ಮ ಬುಕಿಂಗ್ ವಿವರಗಳೊಂದಿಗೆ WhatsApp ತೆರೆದಿದೆ. ನಮಗೆ ತಕ್ಷಣ ತಲುಪಲು ', 'Send', ' ಒತ್ತಿ, ನಂತರ ಖಚಿತಪಡಿಸಲು ನಾವು ನಿಮಗೆ ಕರೆ ಮಾಡುತ್ತೇವೆ.'],
     },
     search: {
       label: 'ಮೆನುವಿನಲ್ಲಿ ಹುಡುಕಿ', input: 'ಖಾದ್ಯ ಹುಡುಕಿ', placeholder: 'ಖಾದ್ಯ ಹುಡುಕಿ, ಉದಾ. ಪನೀರ್ ಅಥವಾ paneer',

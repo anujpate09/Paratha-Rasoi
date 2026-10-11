@@ -46,6 +46,11 @@ export const ready = db.executeMultiple(`
     sends     INTEGER NOT NULL,
     window_at INTEGER NOT NULL
   );
+
+  CREATE TABLE IF NOT EXISTS settings (
+    key   TEXT PRIMARY KEY,
+    value TEXT NOT NULL
+  );
 `)
 
 // libSQL rows are array-like; turn them into plain { column: value } objects for JSON.
@@ -79,6 +84,17 @@ export async function listMessages() {
 export async function setReservationStatus(id, status) {
   const result = await db.execute({ sql: 'UPDATE reservations SET status = ? WHERE id = ?', args: [status, id] })
   return result.rowsAffected > 0
+}
+
+export async function getSetting(key) {
+  return (await db.execute({ sql: 'SELECT value FROM settings WHERE key = ?', args: [key] })).rows[0]?.[0]
+}
+
+export async function setSetting(key, value) {
+  await db.execute({
+    sql: 'INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value',
+    args: [key, value],
+  })
 }
 
 export async function getOtp(phone) {

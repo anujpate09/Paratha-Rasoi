@@ -2,7 +2,9 @@ import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
 import express from 'express'
 import { TIMES, TOPICS } from '../src/data.js'
-import { addMessage, addReservation, DB_LOCATION, listMessages, listReservations, ready, setReservationStatus } from './db.js'
+import {
+  addMessage, addReservation, DB_LOCATION, getSetting, listMessages, listReservations, ready, setReservationStatus, setSetting,
+} from './db.js'
 import { createOtp, toWhatsAppNumber, verifyOtp } from './otp.js'
 import { sendOtpMessage, whatsappConfigured } from './whatsapp.js'
 
@@ -10,6 +12,10 @@ const PORT = Number(process.env.PORT) || 3001
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN
 const PHONE_RE = /^[0-9+\s-]{8,20}$/
 const OTP_PER_IP = 10 // per hour, so one visitor can't send OTPs to many numbers
+// How the reservation form works, switched from the admin page:
+// 'otp' = customer verifies a WhatsApp OTP; 'whatsapp' = the old way, form opens WhatsApp to the restaurant.
+const BOOKING_MODES = ['otp', 'whatsapp']
+const bookingMode = async () => (await getSetting('bookingMode')) || 'whatsapp'
 
 const app = express()
 // Behind Render's proxy: read the visitor's real IP (used by the OTP rate limit).
@@ -29,8 +35,13 @@ function tooManyOtps(ip) {
   return ++entry.count > OTP_PER_IP
 }
 
-// Step 1 of booking: send a 6-digit OTP to the customer's WhatsApp.
+app.get('/api/settings', async (req, res) => {
+  res.json({ bookingMode: await bookingMode(), otpReady: whatsappConfigured })
+})
+
+// Step 1 of booking (OTP mode): send a 6-digit OTP to the customer's WhatsApp.
 app.post('/api/otp', async (req, res) => {
+  if ((await bookingMode()) !== 'otp') return res.status(400).json({ error: 'OTP is not needed right now. Please try again.' })
   const phone = toWhatsAppNumber(text(req.body.phone, 20))
   if (!phone) return res.status(400).json({ error: 'Please enter a valid phone number.' })
   if (tooManyOtps(req.ip)) return res.status(429).json({ error: 'Too many OTP requests. Please try again later.' })
@@ -48,7 +59,7 @@ app.post('/api/otp', async (req, res) => {
   res.json({ ok: true })
 })
 
-// Step 2: save the reservation once the OTP matches.
+// Step 2: save the reservation (in OTP mode, only once the OTP matches).
 app.post('/api/reservations', async (req, res) => {
   const name = text(req.body.name, 100)
   const phone = text(req.body.phone, 20)
@@ -62,7 +73,7 @@ app.post('/api/reservations', async (req, res) => {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || date < today) return res.status(400).json({ error: 'Please pick a valid date.' })
   if (!TIMES.includes(time)) return res.status(400).json({ error: 'Please pick a valid time.' })
   if (!Number.isInteger(guests) || guests < 1 || guests > 6) return res.status(400).json({ error: 'Party size must be 1–6.' })
-  if (!(await verifyOtp(toWhatsAppNumber(phone), otp))) return res.status(400).json({ error: 'Wrong or expired OTP. Please check it or resend.' })
+  if ((await bookingMode()) === 'otp' && !(await verifyOtp(toWhatsAppNumber(phone), otp))) return res.status(400).json({ error: 'Wrong or expired OTP. Please check it or resend.' })
 
   const id = await addReservation({ name, phone, date, time, guests })
   res.status(201).json({ id })
@@ -89,6 +100,13 @@ function requireAdmin(req, res, next) {
 
 app.get('/api/reservations', requireAdmin, async (req, res) => res.json(await listReservations()))
 app.get('/api/messages', requireAdmin, async (req, res) => res.json(await listMessages()))
+
+app.put('/api/settings', requireAdmin, async (req, res) => {
+  const { bookingMode: mode } = req.body
+  if (!BOOKING_MODES.includes(mode)) return res.status(400).json({ error: 'Invalid booking mode.' })
+  await setSetting('bookingMode', mode)
+  res.json({ bookingMode: mode, otpReady: whatsappConfigured })
+})
 
 app.patch('/api/reservations/:id', requireAdmin, async (req, res) => {
   const { status } = req.body

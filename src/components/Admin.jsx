@@ -3,6 +3,10 @@ import { TIMES } from '../data'
 
 const TOKEN_KEY = 'pr-admin-token'
 const STATUSES = ['pending', 'confirmed', 'cancelled']
+const BOOKING_MODES = [
+  ['whatsapp', 'Direct WhatsApp', 'The form opens WhatsApp with the booking details, like before.'],
+  ['otp', 'OTP on WhatsApp', 'Customers confirm with a 6-digit OTP sent to their WhatsApp.'],
+]
 
 function readToken() {
   try {
@@ -39,6 +43,8 @@ export default function Admin() {
   const [tab, setTab] = useState('reservations')
   const [reservations, setReservations] = useState([])
   const [messages, setMessages] = useState([])
+  const [settings, setSettings] = useState(null)
+  const [savingMode, setSavingMode] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -52,12 +58,14 @@ export default function Admin() {
     setLoading(true)
     setError('')
     try {
-      const [r, m] = await Promise.all([
+      const [r, m, s] = await Promise.all([
         adminFetch(token, '/api/reservations'),
         adminFetch(token, '/api/messages'),
+        adminFetch(token, '/api/settings'),
       ])
       setReservations(r.sort(byDateTime))
       setMessages(m)
+      setSettings(s)
     } catch (err) {
       if (err.status === 401) {
         logout()
@@ -80,6 +88,18 @@ export default function Admin() {
       setReservations((list) => list.map((r) => (r.id === id ? { ...r, status } : r)))
     } catch (err) {
       setError(err.message)
+    }
+  }
+
+  const changeMode = async (bookingMode) => {
+    setSavingMode(true)
+    setError('')
+    try {
+      setSettings(await adminFetch(token, '/api/settings', { method: 'PUT', body: JSON.stringify({ bookingMode }) }))
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setSavingMode(false)
     }
   }
 
@@ -125,6 +145,34 @@ export default function Admin() {
           <a className="btn" href="/">Website</a>
         </div>
       </header>
+
+      <section className="admin-settings">
+        <div>
+          <h2 id="booking-mode">Table booking</h2>
+          <p>How customers send a reservation from the website.</p>
+        </div>
+        <div className="admin-switch" role="radiogroup" aria-labelledby="booking-mode">
+          {BOOKING_MODES.map(([value, label, hint]) => (
+            <button
+              key={value}
+              type="button"
+              role="radio"
+              aria-checked={settings?.bookingMode === value}
+              disabled={!settings || savingMode}
+              onClick={() => changeMode(value)}
+            >
+              <b>{label}</b>
+              <small>{hint}</small>
+            </button>
+          ))}
+        </div>
+        {settings?.bookingMode === 'otp' && !settings.otpReady && (
+          <p className="admin-warning" role="alert">
+            WhatsApp API is not set up yet, so customers won't receive the OTP and can't book. Add WHATSAPP_TOKEN and
+            WHATSAPP_PHONE_NUMBER_ID on Render, or switch back to Direct WhatsApp.
+          </p>
+        )}
+      </section>
 
       <div className="admin-tabs" role="tablist">
         <button role="tab" aria-selected={tab === 'reservations'} onClick={() => setTab('reservations')}>

@@ -20,6 +20,7 @@ Reservations and contact-form messages are saved with [libSQL](https://github.co
   (Render's free plan has no persistent disk). Set `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN`.
   Tables are created automatically on first start.
 
+- `GET /api/settings`, `PUT /api/settings` (admin): booking mode
 - `POST /api/otp`: sends a booking OTP to the customer's WhatsApp
 - `POST /api/reservations`: reservation modal (saved only with the correct OTP)
 - `POST /api/messages`: contact form (WhatsApp still opens as before)
@@ -34,7 +35,10 @@ or the VS Code "SQLite Viewer" extension.
 
 ## WhatsApp OTP for bookings
 
-When a customer fills the reservation form, a 6-digit OTP is sent to their WhatsApp number.
+The admin page has a **Table booking** switch:
+
+- **Direct WhatsApp** (default): the form opens WhatsApp with the booking details and saves the entry, like before.
+- **OTP on WhatsApp**: a 6-digit OTP is sent to the customer's WhatsApp number.
 The booking is saved only after they enter it (valid 5 minutes, 5 tries; max 5 OTPs per number per hour).
 
 Until WhatsApp is set up, the OTP is printed in the server terminal, so you can still test.

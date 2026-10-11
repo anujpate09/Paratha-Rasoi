@@ -9,6 +9,11 @@ async function post(path, body) {
   return data
 }
 
+export const getSettings = async () => {
+  const res = await fetch('/api/settings')
+  if (!res.ok) throw new Error('Could not load booking settings. Please try again.')
+  return res.json()
+}
 export const requestOtp = (phone) => post('/api/otp', { phone })
 export const createReservation =(reservation) => post('/api/reservations', reservation)
 export const createMessage = (message) => post('/api/messages', message)
