@@ -12,6 +12,8 @@ const PHONE_RE = /^[0-9+\s-]{8,20}$/
 const OTP_PER_IP = 10 // per hour, so one visitor can't send OTPs to many numbers
 
 const app = express()
+// Behind Render's proxy: read the visitor's real IP (used by the OTP rate limit).
+app.set('trust proxy', 1)
 app.use(express.json({ limit: '20kb' }))
 
 const text = (value, max) => (typeof value === 'string' ? value.trim().slice(0, max) : '')
