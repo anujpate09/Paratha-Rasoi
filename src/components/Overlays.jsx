@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { createReservation } from '../api'
+import { createReservation, requestOtp } from '../api'
 import { MENU, TIMES, WHATSAPP, ZOMATO_BOOKING } from '../data'
 import { CATEGORY_HI, DISH_HI, useLang } from '../i18n'
 import Icon from './Icon'
@@ -64,51 +64,85 @@ export function Overlay({ show, onClick }) {
   return <div className={`overlay${show ? ' show' : ''}`} onClick={onClick} />
 }
 
+// Pre-filled WhatsApp message to the restaurant with the booking details.
+function restaurantWhatsApp(booking) {
+  const day = new Date(`${booking.date}T00:00`).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' })
+  const text = [
+    'Hello Paratha Rasoi! I have reserved a table.',
+    '',
+    `Name: ${booking.name}`,
+    `Phone: ${booking.phone}`,
+    `Date: ${day}`,
+    `Time: ${booking.time}`,
+    `Guests: ${booking.guests}`,
+  ].join('\n')
+  return `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}`
+}
+
 export function ReservationModal({ open, onClose }) {
   const { t } = useLang()
   const ref = usePanel(open, onClose)
-  const [submitted, setSubmitted] = useState(false)
+  // form → otp (code sent to the customer's WhatsApp) → done (saved in the database)
+  const [step, setStep] = useState('form')
+  const [booking, setBooking] = useState(null)
+  const [cooldown, setCooldown] = useState(0)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const today = new Date().toISOString().slice(0, 10)
 
   useEffect(() => {
     if (!open) {
-      setSubmitted(false)
+      setStep('form')
+      setBooking(null)
       setError('')
     }
   }, [open])
 
-  const onSubmit = async (event) => {
-    event.preventDefault()
-    const formElement = event.currentTarget
-    const booking = Object.fromEntries(new FormData(formElement))
-    // Send the request to the restaurant's WhatsApp so they see it right away. This must open
-    // synchronously inside the submit handler, or browsers block it as a popup.
-    const day = new Date(`${booking.date}T00:00`).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' })
-    const text = [
-      'Hello Paratha Rasoi! I would like to reserve a table.',
-      '',
-      `Name: ${booking.name}`,
-      `Phone: ${booking.phone}`,
-      `Date: ${day}`,
-      `Time: ${booking.time}`,
-      `Guests: ${booking.guests}`,
-    ].join('\n')
-    window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}`, '_blank', 'noopener')
+  useEffect(() => {
+    if (cooldown <= 0) return
+    const timer = setTimeout(() => setCooldown((s) => s - 1), 1000)
+    return () => clearTimeout(timer)
+  }, [cooldown])
 
+  const run = async (action) => {
     setSaving(true)
     setError('')
     try {
-      await createReservation(booking)
-      formElement.reset()
-      setSubmitted(true)
+      await action()
     } catch (err) {
       setError(err.message)
     } finally {
       setSaving(false)
     }
   }
+
+  const sendOtp = (details) =>
+    run(async () => {
+      await requestOtp(details.phone)
+      setBooking(details)
+      setStep('otp')
+      setCooldown(30)
+    })
+
+  const onSubmit = (event) => {
+    event.preventDefault()
+    sendOtp(Object.fromEntries(new FormData(event.currentTarget)))
+  }
+
+  const onVerify = (event) => {
+    event.preventDefault()
+    const otp = new FormData(event.currentTarget).get('otp')
+    run(async () => {
+      await createReservation({ ...booking, otp })
+      setStep('done')
+    })
+  }
+
+  const errorNote = error && (
+    <p className="form-note" role="alert">
+      {error}
+    </p>
+  )
 
   return (
     <div
@@ -125,35 +159,82 @@ export function ReservationModal({ open, onClose }) {
       </button>
       <h2 id="booking-title">{t('reserve.title')}</h2>
       <p>{t('reserve.subtitle')}</p>
-      {submitted ? (
-        <div className="booking-message" role="status">
-          {t('reserve.success')[0]}<b>{t('reserve.success')[1]}</b>{t('reserve.success')[2]}
-        </div>
-      ) : (
+      {step === 'done' && (
+        <>
+          <div className="booking-message" role="status">
+            {t('reserve.success')}
+          </div>
+          <a className="btn btn-primary booking-whatsapp" href={restaurantWhatsApp(booking)} target="_blank" rel="noreferrer">
+            <Icon name="whatsapp" size={18} /> {t('reserve.alsoWhatsapp')}
+          </a>
+        </>
+      )}
+      {step === 'otp' && (
+        <form onSubmit={onVerify}>
+          <p className="otp-sent">{t('reserve.otpSent', { phone: booking.phone })}</p>
+          <div className="form-grid">
+            <label>
+              {t('reserve.otp')}
+              <input
+                name="otp"
+                required
+                autoFocus
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                pattern="\d{6}"
+                maxLength={6}
+                placeholder="••••••"
+                className="otp-input"
+              />
+            </label>
+          </div>
+          <button className="btn btn-primary" type="submit" disabled={saving}>
+            {saving ? t('reserve.verifying') : t('reserve.verify')}
+          </button>
+          <div className="otp-actions">
+            <button type="button" onClick={() => sendOtp(booking)} disabled={saving || cooldown > 0}>
+              {cooldown > 0 ? t('reserve.resendIn', { s: cooldown }) : t('reserve.resend')}
+            </button>
+            <button type="button" onClick={() => { setStep('form'); setError('') }} disabled={saving}>
+              {t('reserve.changeNumber')}
+            </button>
+          </div>
+          {errorNote}
+        </form>
+      )}
+      {step === 'form' && (
         <form onSubmit={onSubmit}>
           <div className="form-grid">
             <label>
               {t('reserve.name')}
-              <input name="name" required autoComplete="name" placeholder={t('reserve.name')} />
+              <input name="name" required autoComplete="name" placeholder={t('reserve.name')} defaultValue={booking?.name} />
             </label>
             <label>
               {t('reserve.phone')}
-              <input name="phone" type="tel" required autoComplete="tel" placeholder="+91" pattern="[0-9+\s\-]{8,}" />
+              <input
+                name="phone"
+                type="tel"
+                required
+                autoComplete="tel"
+                placeholder="+91"
+                pattern="[0-9+\s\-]{8,}"
+                defaultValue={booking?.phone}
+              />
             </label>
             <label>
               {t('reserve.date')}
-              <input name="date" type="date" min={today} required />
+              <input name="date" type="date" min={today} required defaultValue={booking?.date} />
             </label>
             <label>
               {t('reserve.time')}
-              <select name="time" required defaultValue="">
+              <select name="time" required defaultValue={booking?.time ?? ''}>
                 <option value="" disabled>{t('reserve.selectTime')}</option>
                 {TIMES.map((time) => <option key={time}>{time}</option>)}
               </select>
             </label>
             <label>
               {t('reserve.guests')}
-              <select name="guests" required defaultValue="">
+              <select name="guests" required defaultValue={booking?.guests ?? ''}>
                 <option value="" disabled>{t('reserve.partySize')}</option>
                 {[1, 2, 3, 4, 5, 6].map((n) => <option key={n}>{n}</option>)}
               </select>
@@ -168,11 +249,7 @@ export function ReservationModal({ open, onClose }) {
           <a className="btn booking-zomato" href={ZOMATO_BOOKING} target="_blank" rel="noreferrer">
             {t('reserve.zomato')} <Icon name="arrow" size={16} />
           </a>
-          {error && (
-            <p className="form-note" role="alert">
-              {error}
-            </p>
-          )}
+          {errorNote}
         </form>
       )}
     </div>

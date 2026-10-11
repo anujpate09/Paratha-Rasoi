@@ -9,5 +9,6 @@ async function post(path, body) {
   return data
 }
 
-export const createReservation = (reservation) => post('/api/reservations', reservation)
+export const requestOtp = (phone) => post('/api/otp', { phone })
+export const createReservation =(reservation) => post('/api/reservations', reservation)
 export const createMessage = (message) => post('/api/messages', message)

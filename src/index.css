@@ -491,6 +491,12 @@ a.contact-item:hover{border-color:var(--accent)}
 .speciality-actions{display:flex;flex-wrap:wrap;gap:12px}
 .speciality-actions .btn{gap:10px}
 .booking-message b{color:var(--text)}
+.modal .booking-whatsapp{width:100%;gap:10px}
+.modal .otp-sent{color:#e1d2c5;font-size:13px;margin:20px 0 0}
+.form-grid .otp-input{font-size:22px;letter-spacing:.5em;text-align:center}
+.otp-actions{display:flex;justify-content:space-between;gap:12px;margin-top:14px}
+.otp-actions button{border:0;background:none;color:var(--accent);font-size:12px;padding:6px 0;min-height:32px}
+.otp-actions button:disabled{color:var(--muted);cursor:default}
 
 /* ---- Visit: opening-day storefront photo ---- */
 .storefront{position:relative;margin:0 0 18px}
