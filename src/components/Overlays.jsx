@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { createReservation, requestOtp } from '../api'
 import { MENU, TIMES, WHATSAPP, ZOMATO_BOOKING } from '../data'
-import { CATEGORY_HI, DISH_HI, useLang } from '../i18n'
+import { CATEGORY_NAMES, DISH_NAMES, useLang } from '../i18n'
 import Icon from './Icon'
 
 // Modal behaviour: Escape to close, body scroll lock,
@@ -275,8 +275,10 @@ export function SearchPanel({ open, onClose }) {
   const words = normalize(query).split(' ').filter(Boolean)
   const results = words.length
     ? MENU_ITEMS.filter((item) => {
-        // Match English and Hindi names, so "paneer" and "पनीर" both work in either language.
-        const haystack = normalize(`${item.name} ${item.category} ${DISH_HI[item.name] || ''} ${CATEGORY_HI[item.category] || ''}`)
+        // Match English, Hindi and Kannada names, so "paneer", "पनीर" and "ಪನೀರ್" work in any language.
+        const names = [item.name, item.category]
+        for (const lang of Object.keys(DISH_NAMES)) names.push(DISH_NAMES[lang][item.name], CATEGORY_NAMES[lang][item.category])
+        const haystack = normalize(names.filter(Boolean).join(' '))
         return words.every((word) => haystack.includes(word))
       })
     : []

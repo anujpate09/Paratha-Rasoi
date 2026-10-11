@@ -4,6 +4,8 @@ import { MenuViewer } from './Overlays'
 
 const MENU = {
   en: { src: '/assets/paratha-rasoi-menu.jpg', alt: 'Complete Paratha Rasoi menu with dishes and prices' },
+  // No Kannada menu image yet, so Kannada shows the English menu.
+  kn: { src: '/assets/paratha-rasoi-menu.jpg', alt: 'ಪರಾಠ ರಸೋಯಿಯ ಪೂರ್ಣ ಮೆನು, ಖಾದ್ಯಗಳು ಮತ್ತು ಬೆಲೆಗಳೊಂದಿಗೆ' },
   hi: { src: '/assets/paratha-rasoi-menu-hi.webp', alt: 'पराठा रसोई का पूरा मेन्यू, डिशेज़ और दाम के साथ' },
 }
 

@@ -2,6 +2,8 @@ import { DISHES } from '../data'
 import { DishName, Title, useLang } from '../i18n'
 import Icon from './Icon'
 
+const DESCRIPTION = { hi: 'descriptionHi', kn: 'descriptionKn' }
+
 export default function Signature() {
   const { lang, t } = useLang()
   return (
@@ -18,7 +20,7 @@ export default function Signature() {
               <img src={dish.image} alt={dish.alt} loading="lazy" />
               <div className="dish-body">
                 <h3><DishName name={dish.name} /></h3>
-                <p>{lang === 'hi' ? dish.descriptionHi : dish.description}</p>
+                <p>{dish[DESCRIPTION[lang]] || dish.description}</p>
                 <div className="dish-bottom">
                   <strong>₹{dish.price}</strong>
                 </div>

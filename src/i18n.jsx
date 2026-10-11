@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 
-// All site copy in English and Hindi. Edit wording here; components read it through useLang().
+// All site copy in English, Kannada and Hindi. Edit wording here; components read it through useLang().
 // A title written as [plain, highlighted] renders the second part in the accent colour.
 const STRINGS = {
   en: {
@@ -236,10 +236,129 @@ const STRINGS = {
       fullMenu: 'पूरा मेन्यू देखें', order: 'WhatsApp पर {name} ऑर्डर करें',
     },
   },
+
+  kn: {
+    meta: { title: 'ಪರಾಠ ರಸೋಯಿ — ಅಸಲಿ ಉತ್ತರ ಭಾರತೀಯ ಊಟ' },
+    lang: { switch: 'ಭಾಷೆ ಬದಲಿಸಿ' },
+    nav: {
+      home: 'ಮುಖಪುಟ', menu: 'ಮೆನು', speciality: 'ನಮ್ಮ ವಿಶೇಷ', about: 'ನಮ್ಮ ಬಗ್ಗೆ',
+      visit: 'ವಿಳಾಸ', visitUs: 'ನಮ್ಮಲ್ಲಿಗೆ ಬನ್ನಿ', reviews: 'ವಿಮರ್ಶೆಗಳು', contact: 'ಸಂಪರ್ಕ',
+    },
+    header: {
+      search: 'ಮೆನುವಿನಲ್ಲಿ ಹುಡುಕಿ', whatsapp: 'WhatsApp ನಲ್ಲಿ ಆರ್ಡರ್ ಮಾಡಿ', reserve: 'ಟೇಬಲ್ ಬುಕ್ ಮಾಡಿ',
+      openNav: 'ಮೆನು ತೆರೆಯಿರಿ', closeNav: 'ಮೆನು ಮುಚ್ಚಿ', mainNav: 'ಮುಖ್ಯ ನ್ಯಾವಿಗೇಷನ್',
+    },
+    hero: {
+      eyebrow: 'ಅಸಲಿ ಉತ್ತರ ಭಾರತೀಯ ರುಚಿ',
+      line1: 'ಪ್ರತಿ ಪರಾಠದಲ್ಲೂ ಪ್ರೀತಿ,', line2: 'ಪ್ರತಿ ತುತ್ತಿನಲ್ಲೂ', line3: 'ಸಂತೋಷ',
+      description: 'ಗುಂಜೂರಿನ ಹೃದಯಭಾಗದಲ್ಲಿ ತಾಜಾ ಪರಾಠಗಳು ಮತ್ತು ಮನೆಯಂತಹ ಉತ್ತರ ಭಾರತೀಯ ಊಟ.',
+      order: 'ಈಗಲೇ ಆರ್ಡರ್ ಮಾಡಿ', call: 'ಕರೆ ಮಾಡಿ',
+    },
+    features: {
+      fresh: ['ತಾಜಾ ತಯಾರಿ', 'ನೀವು ಆರ್ಡರ್ ಮಾಡಿದ ನಂತರವೇ ತಯಾರಿಸಲಾಗುತ್ತದೆ'],
+      flavours: ['ಉತ್ತರ ಭಾರತೀಯ ರುಚಿ', 'ಮನೆಯಂತಹ ನೆಮ್ಮದಿಯ ಊಟ'],
+      family: ['ಕುಟುಂಬಕ್ಕೆ ಸೂಕ್ತ', 'ಡೈನ್-ಇನ್, ಟೇಕ್‌ಅವೇ ಮತ್ತು ಡೆಲಿವರಿ'],
+    },
+    signature: {
+      eyebrow: 'ಶೆಫ್ ಅವರ ಆಯ್ಕೆ',
+      title: ['ಸಿಗ್ನೇಚರ್ ', 'ಖಾದ್ಯಗಳು'],
+      intro: 'ನಮ್ಮ ಮೆನುವಿನಿಂದ ಆಯ್ದ ಖಾದ್ಯಗಳು, ಪ್ರೀತಿಯಿಂದ ತಯಾರಿಸಿದವು, ಅವುಗಳ ರುಚಿ ಬಹುಕಾಲ ನೆನಪಿನಲ್ಲಿ ಉಳಿಯುತ್ತದೆ.',
+      viewMenu: 'ಪೂರ್ಣ ಮೆನು ನೋಡಿ',
+    },
+    speciality: {
+      badge: 'ನಮ್ಮ ವಿಶೇಷ ಖಾದ್ಯ',
+      eyebrow: 'ನಮ್ಮ ವಿಶೇಷ',
+      title: ['ಚಿಕನ್ ಘೀ ರೋಸ್ಟ್ ', 'ಪರಾಠ'],
+      body: 'ನಮ್ಮ ಸಿಗ್ನೇಚರ್ ಪರಾಠ: ಹೊರಗೆ ಗರಿಗರಿಯಾಗಿ ತಾಜಾ ಬೇಯಿಸಿದ್ದು, ಒಳಗೆ ಸಮೃದ್ಧವಾದ ಚಿಕನ್ ಘೀ ರೋಸ್ಟ್. ಖಡಕ್ ರುಚಿ, ಬಿಸಿಬಿಸಿ, ಮತ್ತು ನಿಮ್ಮ ಆರ್ಡರ್‌ಗೆ ತಕ್ಕಂತೆ ತಯಾರಿಸಲಾಗುತ್ತದೆ, ತೃಪ್ತಿಕರ ಉತ್ತರ ಭಾರತೀಯ ಊಟಕ್ಕಾಗಿ.',
+      price: 'ಬೆಲೆ', bestWith: 'ಇದರೊಂದಿಗೆ ಸವಿಯಿರಿ', bestWithValue: 'ಮೊಸರು ಮತ್ತು ಪುದೀನ ಚಟ್ನಿ',
+      call: 'ಕರೆ ಮಾಡಿ ಆರ್ಡರ್ ಮಾಡಿ',
+    },
+    fullMenu: {
+      eyebrow: 'ಪೂರ್ಣ ಮೆನು',
+      title: ['ನಮ್ಮ ', 'ಮೆನು'],
+      intro: 'ಕ್ಲಾಸಿಕ್ ಮತ್ತು ಸಿಗ್ನೇಚರ್ ಪರಾಠಗಳು, ಕರಿ, ಸ್ಟಾರ್ಟರ್, ರೈಸ್, ಕಾಂಬೊ ಮತ್ತು ಆಡ್-ಆನ್‌ಗಳು.',
+      hint: 'ಪೂರ್ಣ ಮೆನು ನೋಡಲು ಟ್ಯಾಪ್ ಮಾಡಿ', open: 'ಪೂರ್ಣ ಮೆನು ತೆರೆಯಿರಿ',
+      viewerTitle: 'ನಮ್ಮ ಮೆನು', zoomIn: 'ಜೂಮ್ ಮಾಡಿ', fit: 'ಪರದೆಗೆ ಹೊಂದಿಸಿ', close: 'ಮೆನು ಮುಚ್ಚಿ',
+    },
+    story: {
+      caption: 'ನಮ್ಮ ಡೈನಿಂಗ್ ರೂಮ್ · LG ಸಿಟಿ, ಗುಂಜೂರು',
+      eyebrow: 'ನಮ್ಮ ಕಥೆ',
+      title: ['ಒಳ್ಳೆಯ ಊಟ, ', 'ಒಳ್ಳೆಯ ಮೂಡ್'],
+      p1: 'ಪರಾಠ ರಸೋಯಿ ಆಗಸ್ಟ್ 2026 ರಲ್ಲಿ LG ಸಿಟಿ, ಗುಂಜೂರಿನಲ್ಲಿ ಒಂದು ಸರಳ ಆಲೋಚನೆಯೊಂದಿಗೆ ಆರಂಭವಾಯಿತು: ಮನೆಯಲ್ಲಿ ಮಾಡುವಂತೆಯೇ ಪರಾಠಗಳು. ನೀವು ಆರ್ಡರ್ ಮಾಡಿದಾಗಲೇ ಲಟ್ಟಿಸಿ, ಧಾರಾಳವಾಗಿ ಹೂರಣ ತುಂಬಿ, ಬೆಣ್ಣೆ, ಮೊಸರು ಮತ್ತು ಉಪ್ಪಿನಕಾಯಿಯೊಂದಿಗೆ ತವಾದಿಂದ ನೇರವಾಗಿ ಬಿಸಿಬಿಸಿಯಾಗಿ ಬಡಿಸಲಾಗುತ್ತದೆ.',
+      p2: 'ಕುಟುಂಬ ಮತ್ತು ಸ್ನೇಹಿತರೊಂದಿಗೆ ಊಟಕ್ಕಾಗಿ ನಮ್ಮ ಬಣ್ಣಬಣ್ಣದ ಡೈನಿಂಗ್ ರೂಮ್‌ಗೆ ಬನ್ನಿ, ಅಥವಾ ನಿಮ್ಮ ನೆಚ್ಚಿನ ಖಾದ್ಯಗಳನ್ನು ಮನೆಗೆ ಕೊಂಡೊಯ್ಯಿರಿ. ಪರಾಠಗಳ ಜೊತೆಗೆ ಉತ್ತರ ಭಾರತೀಯ ಕರಿಗಳು, ಸ್ಟಾರ್ಟರ್‌ಗಳು, ರೈಸ್ ಮತ್ತು ಕೈಗೆಟುಕುವ ಕಾಂಬೊಗಳು ಇಲ್ಲಿ ಸಿಗುತ್ತವೆ.',
+      opened: ['ಆಗಸ್ಟ್ 2026', 'ಗುಂಜೂರಿನಲ್ಲಿ ಆರಂಭ'],
+      rating: '{n} Google ವಿಮರ್ಶೆಗಳು',
+      price: 'ಇಬ್ಬರಿಗೆ ಸುಮಾರು',
+    },
+    visit: {
+      eyebrow: 'ವಿಳಾಸ ಮತ್ತು ಸಂಪರ್ಕ',
+      title: ['ಬನ್ನಿ ', 'ಪರಾಠ ರಸೋಯಿಗೆ'],
+      call: '{phone} ಗೆ ಕರೆ ಮಾಡಿ',
+      storefront: 'LG ಸಿಟಿ, ಗುಂಜೂರು – ನೆರಿಗೆ ರಸ್ತೆಯಲ್ಲಿ ನಮ್ಮ ಬೋರ್ಡ್ ನೋಡಿ',
+      address: 'ವಿಳಾಸ', directions: 'ದಾರಿ ನೋಡಿ →',
+      hours: 'ತೆರೆಯುವ ಸಮಯ', days: 'ಮಂಗಳವಾರ–ಭಾನುವಾರ', closed: 'ಸೋಮವಾರ: ರಜೆ',
+      dining: 'ಊಟದ ಆಯ್ಕೆಗಳು', diningText: 'ಡೈನ್-ಇನ್, ಟೇಕ್‌ಅವೇ ಮತ್ತು ಡೆಲಿವರಿ.',
+      diningNote: 'ಕುಟುಂಬಕ್ಕೆ ಸೂಕ್ತ ವಾತಾವರಣ, ಕೌಂಟರ್ ಮತ್ತು ಟೇಬಲ್ ಸರ್ವೀಸ್',
+    },
+    reviews: {
+      eyebrow: 'ನಮ್ಮ ಅತಿಥಿಗಳು ಏನು ಹೇಳುತ್ತಾರೆ',
+      title: ['Google ', 'ವಿಮರ್ಶೆಗಳು'],
+      count: '{n} ವಿಮರ್ಶೆಗಳು',
+      viewAll: 'ಎಲ್ಲಾ ವಿಮರ್ಶೆಗಳನ್ನು ನೋಡಿ',
+      readMore: 'ಇನ್ನಷ್ಟು ಓದಿ', showLess: 'ಕಡಿಮೆ ತೋರಿಸಿ',
+      prev: 'ಹಿಂದಿನ ವಿಮರ್ಶೆಗಳು', next: 'ಮುಂದಿನ ವಿಮರ್ಶೆಗಳು',
+    },
+    contact: {
+      eyebrow: 'ಸಂಪರ್ಕಿಸಿ',
+      title: ['ನಮ್ಮೊಂದಿಗೆ ', 'ಮಾತನಾಡಿ'],
+      intro: 'ಯಾವುದೇ ಪ್ರಶ್ನೆ, ಪಾರ್ಟಿ ಆರ್ಡರ್ ಅಥವಾ ಸಲಹೆ ಇದೆಯೇ? ನಮಗೆ ಮೆಸೇಜ್ ಕಳುಹಿಸಿ, ನಾವು ಶೀಘ್ರದಲ್ಲೇ ಉತ್ತರಿಸುತ್ತೇವೆ.',
+      callUs: 'ಕರೆ ಮಾಡಿ', whatsapp: 'WhatsApp', chat: 'ನಮ್ಮೊಂದಿಗೆ ಚಾಟ್ ಮಾಡಿ', days: 'ಮಂಗಳ–ಭಾನು',
+      mapTitle: 'ಗುಂಜೂರು, ಬೆಂಗಳೂರಿನಲ್ಲಿ ಪರಾಠ ರಸೋಯಿಯ ನಕ್ಷೆ',
+      name: 'ನಿಮ್ಮ ಹೆಸರು', phone: 'ಫೋನ್', topic: 'ವಿಷಯ', message: 'ಮೆಸೇಜ್',
+      messagePlaceholder: 'ನಾವು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಬಹುದು?',
+      send: 'WhatsApp ಮೂಲಕ ಕಳುಹಿಸಿ',
+      sent: 'ನಿಮ್ಮ ಮೆಸೇಜ್‌ನೊಂದಿಗೆ WhatsApp ತೆರೆದಿದೆ. Send ಒತ್ತಿದರೆ ಸಾಕು!',
+      topics: {
+        'General enquiry': 'ಸಾಮಾನ್ಯ ವಿಚಾರಣೆ', 'Party / bulk order': 'ಪಾರ್ಟಿ / ಬಲ್ಕ್ ಆರ್ಡರ್',
+        'Table booking': 'ಟೇಬಲ್ ಬುಕಿಂಗ್', Feedback: 'ಸಲಹೆ / ಪ್ರತಿಕ್ರಿಯೆ',
+      },
+    },
+    footer: {
+      tagline: 'ಅಸಲಿ ಉತ್ತರ ಭಾರತೀಯ ಊಟ, ತಾಜಾ ತಯಾರಿ ಮತ್ತು ಯಾವಾಗಲೂ ಸಂತೋಷದಿಂದ ಬಡಿಸಲಾಗುತ್ತದೆ.',
+      quickLinks: 'ತ್ವರಿತ ಲಿಂಕ್‌ಗಳು', contactUs: 'ಸಂಪರ್ಕ',
+      hours1: 'ಮಂಗಳ–ಭಾನು: 12–3:30 PM', hours2: 'ಮತ್ತು 5:30–11:30 PM', closed: 'ಸೋಮವಾರ: ರಜೆ',
+      order: 'ಆರ್ಡರ್', orderText: 'ಟೇಕ್‌ಅವೇ ಮತ್ತು ಡೆಲಿವರಿಗೆ ಕರೆ ಮಾಡಿ, ಅಥವಾ ಕುಳಿತು ಊಟ ಮಾಡಲು ಬನ್ನಿ.',
+      callToOrder: 'ಕರೆ ಮಾಡಿ ಆರ್ಡರ್ ಮಾಡಿ', contactBtn: 'ಸಂಪರ್ಕಿಸಿ',
+      rights: '© {year} ಪರಾಠ ರಸೋಯಿ. ಎಲ್ಲ ಹಕ್ಕುಗಳನ್ನು ಕಾಯ್ದಿರಿಸಲಾಗಿದೆ.',
+      privacy: 'ಗೌಪ್ಯತಾ ನೀತಿ', motto: 'ಒಳ್ಳೆಯ ಊಟ • ಒಳ್ಳೆಯ ಮೂಡ್',
+      facebook: 'Facebook ನಲ್ಲಿ ಪರಾಠ ರಸೋಯಿ', instagram: 'Instagram ನಲ್ಲಿ ಪರಾಠ ರಸೋಯಿ',
+    },
+    reserve: {
+      title: 'ಟೇಬಲ್ ಬುಕ್ ಮಾಡಿ', subtitle: 'ಪರಾಠ ರಸೋಯಿಯಲ್ಲಿ ನಿರಾಳವಾದ ಊಟಕ್ಕೆ ಯೋಜನೆ ಮಾಡಿ.',
+      close: 'ಬುಕಿಂಗ್ ಫಾರ್ಮ್ ಮುಚ್ಚಿ',
+      name: 'ನಿಮ್ಮ ಹೆಸರು', phone: 'ಫೋನ್', date: 'ದಿನಾಂಕ', time: 'ಸಮಯ', selectTime: 'ಸಮಯ ಆಯ್ಕೆಮಾಡಿ',
+      guests: 'ಅತಿಥಿಗಳು', partySize: 'ಎಷ್ಟು ಜನ',
+      submit: 'WhatsApp ನಲ್ಲಿ OTP ಪಡೆಯಿರಿ', sending: 'ಕಳುಹಿಸಲಾಗುತ್ತಿದೆ…', or: 'ಅಥವಾ', zomato: 'Zomato ನಲ್ಲಿ ಬುಕ್ ಮಾಡಿ',
+      otpSent: '{phone} ಗೆ WhatsApp ನಲ್ಲಿ 6 ಅಂಕಿಯ OTP ಕಳುಹಿಸಿದ್ದೇವೆ. ಬುಕಿಂಗ್ ಖಚಿತಪಡಿಸಲು ಅದನ್ನು ಕೆಳಗೆ ನಮೂದಿಸಿ.',
+      otp: 'OTP', verify: 'ಪರಿಶೀಲಿಸಿ ಮತ್ತು ಬುಕ್ ಮಾಡಿ', verifying: 'ಪರಿಶೀಲಿಸಲಾಗುತ್ತಿದೆ…',
+      resend: 'OTP ಮತ್ತೆ ಕಳುಹಿಸಿ', resendIn: '{s} ಸೆಕೆಂಡ್‌ಗಳಲ್ಲಿ OTP ಮತ್ತೆ ಕಳುಹಿಸಿ', changeNumber: 'ವಿವರ ಬದಲಿಸಿ',
+      success: 'ಧನ್ಯವಾದಗಳು! ನಿಮ್ಮ ಟೇಬಲ್ ವಿನಂತಿ ಉಳಿಸಲಾಗಿದೆ. ಖಚಿತಪಡಿಸಲು ನಾವು ನಿಮಗೆ ಕರೆ ಮಾಡುತ್ತೇವೆ.',
+      alsoWhatsapp: 'WhatsApp ನಲ್ಲಿಯೂ ಮೆಸೇಜ್ ಮಾಡಿ',
+    },
+    search: {
+      label: 'ಮೆನುವಿನಲ್ಲಿ ಹುಡುಕಿ', input: 'ಖಾದ್ಯ ಹುಡುಕಿ', placeholder: 'ಖಾದ್ಯ ಹುಡುಕಿ, ಉದಾ. ಪನೀರ್ ಅಥವಾ paneer',
+      close: 'ಹುಡುಕಾಟ ಮುಚ್ಚಿ', popular: 'ಜನಪ್ರಿಯ ಹುಡುಕಾಟಗಳು',
+      suggestions: ['ಪರಾಠ', 'ಪನೀರ್', 'ಚಿಕನ್', 'ಕಾಂಬೊ', 'ರೈಸ್'],
+      found: '{n} ಖಾದ್ಯಗಳು ಸಿಕ್ಕಿವೆ', foundOne: '1 ಖಾದ್ಯ ಸಿಕ್ಕಿದೆ', none: '“{q}” ಗೆ ಹೊಂದುವ ಯಾವುದೇ ಖಾದ್ಯ ಸಿಗಲಿಲ್ಲ',
+      fullMenu: 'ಪೂರ್ಣ ಮೆನು ನೋಡಿ', order: 'WhatsApp ನಲ್ಲಿ {name} ಆರ್ಡರ್ ಮಾಡಿ',
+    },
+  },
 }
 
+export const LANGS = ['en', 'kn', 'hi']
+
 // Hindi names for every dish on the menu (English stays the key, matching data.js).
-export const DISH_HI = {
+const DISH_HI = {
   'Aloo Paratha': 'आलू पराठा', 'Aloo Pyaz Paratha': 'आलू प्याज़ पराठा',
   'Punjabi Anardana Aloo Paratha': 'पंजाबी अनारदाना आलू पराठा', 'Paneer Paratha': 'पनीर पराठा',
   'Gobi Paratha': 'गोभी पराठा', 'Matar Paratha': 'मटर पराठा', 'Aloo Matar Paratha': 'आलू मटर पराठा',
@@ -274,17 +393,63 @@ export const DISH_HI = {
   'Jeera Rice + Dhabewala Dal Fry': 'जीरा राइस + ढाबे वाली दाल फ्राई',
 }
 
-export const CATEGORY_HI = {
+const CATEGORY_HI = {
   'Classic Paratha': 'क्लासिक पराठा', 'Signature Paratha': 'सिग्नेचर पराठा', Curry: 'करी',
   Starter: 'स्टार्टर', Rice: 'राइस', 'Add-on': 'ऐड-ऑन', Combos: 'कॉम्बो',
 }
+
+// Kannada names for every dish on the menu.
+const DISH_KN = {
+  'Aloo Paratha': 'ಆಲೂ ಪರಾಠ', 'Aloo Pyaz Paratha': 'ಆಲೂ ಈರುಳ್ಳಿ ಪರಾಠ',
+  'Punjabi Anardana Aloo Paratha': 'ಪಂಜಾಬಿ ಅನಾರ್ದಾನ ಆಲೂ ಪರಾಠ', 'Paneer Paratha': 'ಪನೀರ್ ಪರಾಠ',
+  'Gobi Paratha': 'ಗೋಬಿ ಪರಾಠ', 'Matar Paratha': 'ಬಟಾಣಿ ಪರಾಠ', 'Aloo Matar Paratha': 'ಆಲೂ ಬಟಾಣಿ ಪರಾಠ',
+  'Sattu Paratha': 'ಸತ್ತು ಪರಾಠ', 'Onion Ajwain Paratha': 'ಈರುಳ್ಳಿ ಓಮ ಪರಾಠ', 'Plain Paratha': 'ಸಾದಾ ಪರಾಠ',
+  'Egg Bhurji Paratha': 'ಎಗ್ ಭುರ್ಜಿ ಪರಾಠ', 'Egg Chicken Paratha': 'ಎಗ್ ಚಿಕನ್ ಪರಾಠ',
+  'Chicken Keema Paratha': 'ಚಿಕನ್ ಕೀಮಾ ಪರಾಠ',
+  'Aloo Cheese Paratha': 'ಆಲೂ ಚೀಸ್ ಪರಾಠ', 'Cheese Garlic Paratha': 'ಚೀಸ್ ಗಾರ್ಲಿಕ್ ಪರಾಠ',
+  'Chilli Cheese Paratha': 'ಚಿಲ್ಲಿ ಚೀಸ್ ಪರಾಠ', 'Chicken Cheese Paratha': 'ಚಿಕನ್ ಚೀಸ್ ಪರಾಠ',
+  'Paneer Ghee Roast Paratha': 'ಪನೀರ್ ಘೀ ರೋಸ್ಟ್ ಪರಾಠ', 'Chicken Ghee Roast Paratha': 'ಚಿಕನ್ ಘೀ ರೋಸ್ಟ್ ಪರಾಠ',
+  'Paneer Butter Masala': 'ಪನೀರ್ ಬಟರ್ ಮಸಾಲಾ', 'Matar Paneer': 'ಮಟರ್ ಪನೀರ್', 'Kadhai Paneer': 'ಕಡಾಯಿ ಪನೀರ್',
+  'Mix Veg Masala': 'ಮಿಕ್ಸ್ ವೆಜ್ ಮಸಾಲಾ', 'Chatpate Aloo Dry': 'ಚಟ್‌ಪಟೆ ಆಲೂ (ಡ್ರೈ)',
+  'Dhabe Wala Dal Fry': 'ಢಾಬೆ ವಾಲಾ ದಾಲ್ ಫ್ರೈ', 'Chole Masala': 'ಚೋಲೆ ಮಸಾಲಾ', 'Chilli Paneer': 'ಚಿಲ್ಲಿ ಪನೀರ್',
+  'Kadhai Chicken': 'ಕಡಾಯಿ ಚಿಕನ್', 'Bhuna Chicken': 'ಭುನಾ ಚಿಕನ್', 'Butter Chicken': 'ಬಟರ್ ಚಿಕನ್',
+  'Chilli Chicken Gravy': 'ಚಿಲ್ಲಿ ಚಿಕನ್ ಗ್ರೇವಿ', 'Pepper Chicken': 'ಪೆಪ್ಪರ್ ಚಿಕನ್',
+  'Chicken Pakora': 'ಚಿಕನ್ ಪಕೋಡಾ', 'Chicken Drumsticks': 'ಚಿಕನ್ ಡ್ರಮ್‌ಸ್ಟಿಕ್ಸ್', 'Chicken Majestic': 'ಚಿಕನ್ ಮೆಜೆಸ್ಟಿಕ್',
+  'Chicken 65': 'ಚಿಕನ್ 65', 'Chana Chilli': 'ಚನಾ ಚಿಲ್ಲಿ', 'Pepper Paneer': 'ಪೆಪ್ಪರ್ ಪನೀರ್',
+  'Chilli Paneer Dry': 'ಚಿಲ್ಲಿ ಪನೀರ್ (ಡ್ರೈ)', 'Chilli Chicken Dry': 'ಚಿಲ್ಲಿ ಚಿಕನ್ (ಡ್ರೈ)',
+  'Steam Rice': 'ಸ್ಟೀಮ್ ರೈಸ್', 'Jeera Rice': 'ಜೀರಾ ರೈಸ್', 'Veg Fried Rice': 'ವೆಜ್ ಫ್ರೈಡ್ ರೈಸ್',
+  'Egg Fried Rice': 'ಎಗ್ ಫ್ರೈಡ್ ರೈಸ್', 'Paneer Fried Rice': 'ಪನೀರ್ ಫ್ರೈಡ್ ರೈಸ್',
+  'Chicken Fried Rice': 'ಚಿಕನ್ ಫ್ರೈಡ್ ರೈಸ್',
+  'Extra Butter': 'ಹೆಚ್ಚುವರಿ ಬೆಣ್ಣೆ', 'Extra Curd': 'ಹೆಚ್ಚುವರಿ ಮೊಸರು', 'Mint Chutney': 'ಪುದೀನ ಚಟ್ನಿ',
+  Pickle: 'ಉಪ್ಪಿನಕಾಯಿ', 'Lachha Pyaz': 'ಲಚ್ಛಾ ಈರುಳ್ಳಿ',
+  'Aloo Paratha + Chole + Dahi': 'ಆಲೂ ಪರಾಠ + ಚೋಲೆ + ಮೊಸರು',
+  '4 Puri + Aloo Jeera + Chutney + Onion': '4 ಪೂರಿ + ಆಲೂ ಜೀರಾ + ಚಟ್ನಿ + ಈರುಳ್ಳಿ',
+  '4 Puri + Aloo Sabji + Dahi': '4 ಪೂರಿ + ಆಲೂ ಪಲ್ಯ + ಮೊಸರು', '4 Puri + Chole + Dahi': '4 ಪೂರಿ + ಚೋಲೆ + ಮೊಸರು',
+  '2 Paratha Meal (Any 2 Classic + Curd + Pickle)': '2 ಪರಾಠ ಮೀಲ್ (ಯಾವುದೇ 2 ಕ್ಲಾಸಿಕ್ + ಮೊಸರು + ಉಪ್ಪಿನಕಾಯಿ)',
+  '2 Paratha Non-Veg Meal (Chicken Keema + 1 Classic + Curd + Pickle + Butter + Mint Chutney)':
+    '2 ಪರಾಠ ನಾನ್-ವೆಜ್ ಮೀಲ್ (ಚಿಕನ್ ಕೀಮಾ + 1 ಕ್ಲಾಸಿಕ್ + ಮೊಸರು + ಉಪ್ಪಿನಕಾಯಿ + ಬೆಣ್ಣೆ + ಪುದೀನ ಚಟ್ನಿ)',
+  'Punjabi Meal (2 Classic + Chole + Curd)': 'ಪಂಜಾಬಿ ಮೀಲ್ (2 ಕ್ಲಾಸಿಕ್ + ಚೋಲೆ + ಮೊಸರು)',
+  'Chole Chawal': 'ಚೋಲೆ ಚಾವಲ್', '3 Plain Paratha + Kadhai Paneer': '3 ಸಾದಾ ಪರಾಠ + ಕಡಾಯಿ ಪನೀರ್',
+  '3 Plain Paratha + Bhuna Chicken': '3 ಸಾದಾ ಪರಾಠ + ಭುನಾ ಚಿಕನ್',
+  'Jeera Rice + Dhabewala Dal Fry': 'ಜೀರಾ ರೈಸ್ + ಢಾಬೆ ವಾಲಾ ದಾಲ್ ಫ್ರೈ',
+}
+
+const CATEGORY_KN = {
+  'Classic Paratha': 'ಕ್ಲಾಸಿಕ್ ಪರಾಠ', 'Signature Paratha': 'ಸಿಗ್ನೇಚರ್ ಪರಾಠ', Curry: 'ಕರಿ',
+  Starter: 'ಸ್ಟಾರ್ಟರ್', Rice: 'ರೈಸ್', 'Add-on': 'ಆಡ್-ಆನ್', Combos: 'ಕಾಂಬೊ',
+}
+
+// Translated dish and category names per language (English needs none).
+export const DISH_NAMES = { hi: DISH_HI, kn: DISH_KN }
+export const CATEGORY_NAMES = { hi: CATEGORY_HI, kn: CATEGORY_KN }
 
 const STORAGE_KEY = 'pr-lang'
 const LangContext = createContext({ lang: 'en', setLang: () => {} })
 
 function readSavedLang() {
   try {
-    return localStorage.getItem(STORAGE_KEY) === 'hi' ? 'hi' : 'en'
+    const saved = localStorage.getItem(STORAGE_KEY)
+    return LANGS.includes(saved) ? saved : 'en'
   } catch {
     return 'en'
   }
@@ -319,15 +484,15 @@ export function useLang() {
     },
     [lang],
   )
-  const dish = useCallback((name) => (lang === 'hi' && DISH_HI[name]) || name, [lang])
-  const category = useCallback((name) => (lang === 'hi' && CATEGORY_HI[name]) || name, [lang])
+  const dish = useCallback((name) => DISH_NAMES[lang]?.[name] || name, [lang])
+  const category = useCallback((name) => CATEGORY_NAMES[lang]?.[name] || name, [lang])
   return { lang, setLang, t, dish, category }
 }
 
-// Renders a dish name; in Hindi mode the English name follows in small text so it still matches the menu.
+// Renders a dish name; in Kannada/Hindi the English name follows in small text so it still matches the menu.
 export function DishName({ name }) {
   const { lang, dish } = useLang()
-  if (lang !== 'hi' || !DISH_HI[name]) return name
+  if (!DISH_NAMES[lang]?.[name]) return name
   return (
     <>
       {dish(name)}
@@ -346,16 +511,17 @@ export function Title({ parts }) {
   )
 }
 
+const LANG_LABELS = { en: 'EN', kn: 'ಕನ್ನಡ', hi: 'हिं' }
+
 export function LangToggle() {
   const { lang, setLang, t } = useLang()
   return (
     <div className="lang-toggle" role="group" aria-label={t('lang.switch')}>
-      <button type="button" aria-pressed={lang === 'en'} onClick={() => setLang('en')} lang="en">
-        EN
-      </button>
-      <button type="button" aria-pressed={lang === 'hi'} onClick={() => setLang('hi')} lang="hi">
-        हिं
-      </button>
+      {LANGS.map((code) => (
+        <button key={code} type="button" aria-pressed={lang === code} onClick={() => setLang(code)} lang={code}>
+          {LANG_LABELS[code]}
+        </button>
+      ))}
     </div>
   )
 }

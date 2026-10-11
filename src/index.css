@@ -1,4 +1,4 @@
-:root{--bg:#11100f;--panel:#292624;--text:#f4f0ec;--muted:#afa69f;--accent:#d59661;--line:#594336;--serif:'Playfair Display','Noto Serif Devanagari',Georgia,serif;--sans:'DM Sans','Noto Sans Devanagari',Arial,sans-serif}
+:root{--bg:#11100f;--panel:#292624;--text:#f4f0ec;--muted:#afa69f;--accent:#d59661;--line:#594336;--serif:'Playfair Display','Noto Serif Devanagari','Noto Serif Kannada',Georgia,serif;--sans:'DM Sans','Noto Sans Devanagari','Noto Sans Kannada',Arial,sans-serif}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased}button,input,select{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}img{display:block;max-width:100%}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:3px}em{font-style:normal;color:var(--accent)}.wrap{width:min(1180px,calc(100% - 64px));margin:auto}
 .header{height:86px;display:flex;align-items:center;justify-content:space-between;gap:25px;position:relative;z-index:20}.logo{font:500 26px/.78 var(--serif);letter-spacing:-.08em;white-space:nowrap;display:block}.logo span{display:block;margin-left:6px}.nav{display:flex;gap:35px;margin:auto}.nav a{font-size:11px;letter-spacing:.07em;text-transform:uppercase;font-weight:700;position:relative}.nav a:hover,.nav a.active{color:#fff}.nav a.active:after,.nav a:hover:after{content:'';position:absolute;bottom:-9px;left:0;right:0;height:2px;background:var(--accent)}.header-actions{display:flex;align-items:center;gap:16px}.icon-btn{color:#f3eee9;background:none;border:0;padding:4px;font-size:22px;line-height:1;position:relative}.cart-control span{position:absolute;top:-7px;right:-8px;background:var(--accent);color:#20140e;font-size:9px;font-weight:700;min-width:15px;height:15px;border-radius:50%;display:grid;place-items:center}.cart-control span[hidden]{display:none}.mobile-toggle{display:none}
 .eyebrow{color:var(--accent);font-size:11px;font-weight:700;letter-spacing:.17em;text-transform:uppercase}.eyebrow:before{content:'';width:22px;height:1px;display:inline-block;background:var(--accent);vertical-align:middle;margin-right:12px}.hero{min-height:570px;display:grid;grid-template-columns:47% 53%;align-items:center;position:relative}.hero-copy{z-index:2}.hero h1{font:500 clamp(56px,6.6vw,90px)/1 var(--serif);letter-spacing:-.055em;margin:21px 0 31px;white-space:nowrap}.hero-description{border-top:1px solid var(--line);padding-top:20px;max-width:395px;font-size:15px;color:#c9c0b9;line-height:1.7}.hero-buttons{display:flex;gap:11px;margin-top:32px}.btn{min-height:44px;border:1px solid var(--line);padding:0 20px;color:var(--text);background:transparent;display:inline-flex;align-items:center;justify-content:center;gap:14px;text-transform:uppercase;font-size:11px;font-weight:700;letter-spacing:.07em;transition:transform .2s,background .2s,border-color .2s}.btn:hover{transform:translateY(-2px);border-color:var(--accent);background:#312018}.btn-primary{background:linear-gradient(110deg,#704229,#b46d3c);border-color:#95603f}.btn-primary:hover{background:#b46d3c}.hero-visual{min-width:0;position:relative;margin-right:-50px}.hero-visual:before{content:'';position:absolute;width:83%;aspect-ratio:1;border:1px solid #80563a88;left:8%;top:0;border-radius:50%}.hero-visual img{width:100%;aspect-ratio:1.17;object-fit:cover;border-radius:50%;filter:drop-shadow(0 22px 25px #000a);mask-image:radial-gradient(ellipse 66% 58% at 50% 50%,#000 68%,transparent 100%)}.hero-stamp{position:absolute;right:35px;bottom:5px;width:100px;height:100px;border:1px solid #866247;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:#12100fde;font:500 14px/1.13 var(--serif);letter-spacing:.05em;transform:rotate(-10deg)}.hero-stamp small{font:600 8px var(--sans);color:var(--accent);letter-spacing:.2em;margin-bottom:6px}.hero-stamp span{font-size:11px;color:var(--accent);margin-top:4px}
@@ -524,22 +524,24 @@ a.contact-item:hover{border-color:var(--accent)}
 .legal-footer a:hover,.footer-bottom a:hover{color:var(--accent)}
 .footer-bottom a{text-decoration:underline;text-underline-offset:3px}
 
-/* ---- Language toggle (EN / हिं) ---- */
+/* ---- Language toggle (EN / ಕನ್ನಡ / हिं) ---- */
 .lang-toggle{display:inline-flex;flex:none;border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px}
 .lang-toggle button{border:0;background:none;color:var(--muted);font-size:12px;font-weight:700;line-height:1;padding:7px 10px;border-radius:999px;min-width:34px;transition:background .2s,color .2s}
-.lang-toggle button[lang=hi]{font-size:13px;padding-top:6px;padding-bottom:8px}
+.lang-toggle button:is([lang=hi],[lang=kn]){font-size:13px;padding-top:6px;padding-bottom:8px}
 .lang-toggle button:hover{color:var(--text)}
 .lang-toggle button[aria-pressed=true]{background:var(--accent);color:#21130e}
 @media(max-width:400px){.lang-toggle button{padding:6px 8px;min-width:30px}}
 
-/* ---- Hindi typography: Devanagari needs normal spacing, a bit more line height, no uppercase tracking ---- */
-html[lang=hi] body *{letter-spacing:normal!important}
-html[lang=hi] .hero h1{line-height:1.22}
-html[lang=hi] .section-title,html[lang=hi] .story h2,html[lang=hi] .speciality-copy h2,html[lang=hi] .reviews h2{line-height:1.35}
-html[lang=hi] .eyebrow{font-size:13px}
-html[lang=hi] .nav a,html[lang=hi] .btn{font-size:13px}
+/* ---- Hindi & Kannada typography: Indian scripts need normal spacing, a bit more line height, no uppercase tracking ---- */
+html:is([lang=hi],[lang=kn]) body *{letter-spacing:normal!important}
+html:is([lang=hi],[lang=kn]) .hero h1{line-height:1.22}
+/* Kannada words are longer, so the first hero line may wrap on narrow screens */
+@media(max-width:680px){html[lang=kn] .hero h1 span:first-child{white-space:normal}}
+html:is([lang=hi],[lang=kn]) .section-title,html:is([lang=hi],[lang=kn]) .story h2,html:is([lang=hi],[lang=kn]) .speciality-copy h2,html:is([lang=hi],[lang=kn]) .reviews h2{line-height:1.35}
+html:is([lang=hi],[lang=kn]) .eyebrow{font-size:13px}
+html:is([lang=hi],[lang=kn]) .nav a,html:is([lang=hi],[lang=kn]) .btn{font-size:13px}
 .dish-en{display:block;margin-top:3px;font:500 12px var(--sans);color:var(--muted)}
-/* Phones: the toggle becomes one button showing the other language */
+/* Phones: the toggle shows only the languages you can switch to */
 @media(max-width:480px){
   .header{gap:12px}
   .lang-toggle{padding:0}
@@ -550,8 +552,8 @@ html[lang=hi] .nav a,html[lang=hi] .btn{font-size:13px}
   .logo img,.header-bar.scrolled .logo img{width:100px}
   .header-actions{gap:6px}
 }
-/* Devanagari reads poorly below ~13px, so lift the smallest Hindi text */
-html[lang=hi] .dish-body p{font-size:13px;line-height:1.6}
-html[lang=hi] .contact-item small,html[lang=hi] .speciality-meta small,html[lang=hi] .stats div{font-size:13px}
-html[lang=hi] .form-grid label{font-size:13px}
-html[lang=hi] .footer-grid p,html[lang=hi] .footer-grid li{font-size:13px}
+/* Devanagari and Kannada read poorly below ~13px, so lift the smallest text */
+html:is([lang=hi],[lang=kn]) .dish-body p{font-size:13px;line-height:1.6}
+html:is([lang=hi],[lang=kn]) .contact-item small,html:is([lang=hi],[lang=kn]) .speciality-meta small,html:is([lang=hi],[lang=kn]) .stats div{font-size:13px}
+html:is([lang=hi],[lang=kn]) .form-grid label{font-size:13px}
+html:is([lang=hi],[lang=kn]) .footer-grid p,html:is([lang=hi],[lang=kn]) .footer-grid li{font-size:13px}
